@@ -4,11 +4,11 @@ import java.util.Iterator;
 import java.util.function.Consumer;
 
 /**
- * 单向链表的实现（不带头结点）
+ * 单向链表的实现（带头结点）
  */
-public class SinglyLinkedList<T> implements Iterable<T> {
+public class SinglyLinkedListSentinel<T> implements Iterable<T> {
 
-    private Node<T> head;//首元节点(不带头结点)
+    private Node<T> head = new Node<>(null, null);//头结点
 
     /**
      * 单向链表中的节点
@@ -27,14 +27,7 @@ public class SinglyLinkedList<T> implements Iterable<T> {
      * 头插法，在链表头部插入元素
      */
     public void addFirst(T value) {
-        /*if (head == null) {
-            //首元节点为空时
-            head = new Node<T>(value, null);
-        }else {
-            //首元节点非空
-            head = new Node<>(value, head);
-        }*/
-        head = new Node<>(value, head);
+        head.next = new Node<>(value, head.next);
     }
 
     /**
@@ -44,11 +37,7 @@ public class SinglyLinkedList<T> implements Iterable<T> {
      */
     public void addLast(T value) {
         Node<T> last = findLast();
-        if (last == null) {
-            addFirst(value);
-        } else {
-            last.next = new Node<>(value, null);
-        }
+        last.next = new Node<>(value, null);
     }
 
     /**
@@ -76,10 +65,10 @@ public class SinglyLinkedList<T> implements Iterable<T> {
      * @return 被删除的元素值
      */
     public T removeFirst() {
-        if (head == null)
+        if (head.next == null)
             throw new RuntimeException("链表为空，无法删除首元素");
-        T returnVal = head.value;
-        head = head.next;
+        T returnVal = head.next.value;
+        head.next = head.next.next;
         return returnVal;
     }
 
@@ -110,8 +99,6 @@ public class SinglyLinkedList<T> implements Iterable<T> {
      * @return 返回尾结点，返回null表示链表为空
      */
     private Node<T> findLast() {
-        if (head == null)
-            return null;
         Node<T> cur = head;
         while (cur.next != null) {
             cur = cur.next;
@@ -128,7 +115,7 @@ public class SinglyLinkedList<T> implements Iterable<T> {
     private Node<T> findNode(int index) {
         if (index < 0)
             return null;
-        Node<T> cur = head;
+        Node<T> cur = head.next;
         while (cur != null) {
             if (index == 0)
                 return cur;
@@ -158,7 +145,7 @@ public class SinglyLinkedList<T> implements Iterable<T> {
      * @param consumer 函数式接口，表示遍历中的具体操作
      */
     public void loop(Consumer<T> consumer) {
-        Node<T> cur = head;
+        Node<T> cur = head.next;
         while (cur != null) {
             consumer.accept(cur.value);
             cur = cur.next;
@@ -173,7 +160,7 @@ public class SinglyLinkedList<T> implements Iterable<T> {
     @Override
     public Iterator<T> iterator() {
         return new Iterator<T>() {
-            Node<T> cur = head;
+            Node<T> cur = head.next;
 
             @Override
             public boolean hasNext() {
@@ -189,3 +176,4 @@ public class SinglyLinkedList<T> implements Iterable<T> {
         };
     }
 }
+
