@@ -68,5 +68,6 @@ public class InfixToSuffix {
 //        System.out.println(infixToSuffix("a+b*c-d"));
         System.out.println(infixToSuffix("(a+b)*c"));
         System.out.println(infixToSuffix("(a+b*c-d)*e"));
+
     }
 }
