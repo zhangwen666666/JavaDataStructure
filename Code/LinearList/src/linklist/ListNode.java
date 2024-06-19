@@ -3,8 +3,8 @@ package linklist;
 import java.util.Random;
 
 public class ListNode {
-    int val;
-    ListNode next;
+    public int val;
+    public ListNode next;
 
     ListNode() {
     }

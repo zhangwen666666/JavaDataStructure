@@ -47,7 +47,6 @@ public class PriorityQueue3<E extends Priority> implements Queue<E> {
         array[j] = temp;
     }
 
-
     @Override
     public E poll() {
         if (isEmpty())
@@ -65,13 +64,13 @@ public class PriorityQueue3<E extends Priority> implements Queue<E> {
      */
     private void downAdjustmentHeap() {
         int parentIndex = 0;
-        while (parentIndex * 2 + 1 < size - 1) {
+        while (parentIndex * 2 + 1 < size) {
             int leftIndex = parentIndex * 2 + 1;
             int rightIndex = parentIndex * 2 + 2;
             int leftPriority = array[leftIndex].priority();
             int parentPriority = array[parentIndex].priority();
             //如果有右孩子
-            if (rightIndex < size - 1) {
+            if (rightIndex < size) {
                 int rightPriority = array[rightIndex].priority();
                 if (leftPriority > rightPriority && leftPriority > parentPriority) {
                     swap(leftIndex, parentIndex);
@@ -79,17 +78,16 @@ public class PriorityQueue3<E extends Priority> implements Queue<E> {
                 } else if (rightPriority > leftPriority && rightPriority > parentPriority) {
                     swap(rightIndex, parentIndex);
                     parentIndex = rightIndex;
-                }else {
+                } else {
                     return;
                 }
-            }else {//没有右孩子,只需要判断当前节点和左孩子节点的优先级即可结束，因为其左孩子一定没有字节点了
-                if(leftPriority > parentPriority)
-                    swap(leftIndex,parentIndex);
+            } else {//没有右孩子,只需要判断当前节点和左孩子节点的优先级即可结束，因为其左孩子一定没有字节点了
+                if (leftPriority > parentPriority)
+                    swap(leftIndex, parentIndex);
                 return;
             }
         }
     }
-
 
     @Override
     public E peek() {
@@ -107,4 +105,5 @@ public class PriorityQueue3<E extends Priority> implements Queue<E> {
     public boolean isFull() {
         return size == array.length;
     }
+
 }

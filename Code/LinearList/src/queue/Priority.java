@@ -29,4 +29,6 @@ class Entry implements Priority{
     public String toString(){
         return "(" + name + " priority = " + priority + ")";
     }
+
+
 }

@@ -64,4 +64,11 @@ public class Array1Queue<E> implements Queue<E>, Iterable<E> {
             }
         };
     }
+
+    public static void main(String[] args) {
+        Array1Queue<Integer> queue = new Array1Queue<>(5);
+        new Thread(()->queue.offer(1),"t1").start();
+        new Thread(()->queue.offer(1),"t1").start();
+        
+    }
 }
