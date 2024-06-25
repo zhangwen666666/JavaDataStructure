@@ -1,5 +1,7 @@
 package avltree;
 
+import java.util.LinkedList;
+
 /**
  * 自平衡二叉树：AVL树
  */
@@ -140,7 +142,7 @@ public class AVLTree {
      * @return 旋转之后的根节点
      */
     private AVLNode rightLeftRotate(AVLNode node) {
-        node.right = leftRotate(node.right);
+        node.right = rightRotate(node.right);
         return leftRotate(node);
     }
 
@@ -152,8 +154,7 @@ public class AVLTree {
      * @return 调整后的节点
      */
     private AVLNode balance(AVLNode node) {
-        if (node == null)
-            return null;
+        if (node == null) return null;
         int balanceFactor = balanceFactor(node);
         if (balanceFactor > 1 && balanceFactor(node.left) >= 0) {
             //node节点的左子树更高，且左子树中也是左子树更高或相等
@@ -183,14 +184,16 @@ public class AVLTree {
      * @param value 值
      */
     public void put(int key, Object value) {
-        if(root == null){
-            root = new AVLNode(key,value);
+        if (root == null) {
+            root = new AVLNode(key, value);
             return;
         }
         AVLNode cur = root;
         AVLNode parent = null;
+        LinkedList<AVLNode> stack = new LinkedList<>();//记录来时的路
         while (cur != null && cur.key != key) {
             parent = cur;
+            stack.push(parent);
             if (key < cur.key) {
                 cur = cur.left;
             } else {
@@ -202,11 +205,89 @@ public class AVLTree {
             if (key < parent.key) {
                 parent.left = new AVLNode(key, value);
             } else {
-                parent.right = new AVLNode(key,value);
+                parent.right = new AVLNode(key, value);
             }
         } else {
             //树中已经有节点的关键字为key，则修改其对应的value值
             cur.value = value;
         }
+        while (!stack.isEmpty()) {
+            AVLNode pop = stack.pop();
+            updateHeight(pop);//更新高度
+            if (stack.isEmpty()) {
+                root = balance(pop);//平衡根节点时，根节点可能会修改
+            } else {
+                AVLNode peek = stack.peek();
+                //平衡pop节点时，pop节点可能会被修改，需要更新父子关系
+                pop = balance(pop);
+                if (pop.key > peek.key) peek.right = pop;
+                else peek.left = pop;
+            }
+        }
+    }
+
+    /**
+     * 前序遍历
+     *
+     * @return 前序遍历的结果，以String数组的形式返回，每个元素表示key=value
+     */
+    public String[] preOrder() {
+        if (root == null) return null;
+        StringBuilder s = new StringBuilder();
+        LinkedList<AVLNode> stack = new LinkedList<>();
+        AVLNode cur = root;
+        while (cur != null || !stack.isEmpty()) {
+            if (cur != null) {
+                s.append(cur.key).append("=").append(cur.value).append(",");
+                stack.push(cur);
+                cur = cur.left;
+            } else {
+                AVLNode pop = stack.pop();
+                cur = pop.right;
+            }
+        }
+        String string = s.toString();
+        return string.split(",");
+    }
+
+
+    /**
+     * 根据给定的键删除键值对
+     *
+     * @param key 键
+     */
+    public void remove(int key) {
+        root = removeNode(root,key);
+    }
+
+    private AVLNode removeNode(AVLNode node, int key) {
+        if (node == null) return null;
+        if (node.key < key) {
+            node.right = removeNode(node.right, key);
+        } else if (node.key > key) {
+            node.left = removeNode(node.left, key);
+        } else {
+            //当前的node就是要删除的节点
+            //1.最多只有一个孩子
+            if (node.left == null) {
+                node = node.right;
+            } else if (node.right == null) {
+                node = node.left;
+            } else {
+                //2.两个孩子都有
+                // 找node的后继节点
+                AVLNode post = node.right;
+                while (post.left != null) {
+                    post = post.left;
+                }
+                post.right = removeNode(node.right, post.key);
+                post.left = node.left;
+                node = post;
+            }
+        }
+        if(node == null)
+            return null;
+        updateHeight(node);
+        return balance(node);
     }
 }
