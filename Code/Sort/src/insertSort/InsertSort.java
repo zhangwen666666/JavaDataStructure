@@ -21,7 +21,7 @@ public class InsertSort {
     }
 
     public static void main(String[] args) {
-        int[] arr= {7,4,8,3,1,6,5,9,2};
+        int[] arr = {7, 4, 8, 3, 1, 6, 5, 9, 2};
         insertSort(arr);
         System.out.println(Arrays.toString(arr));
     }
